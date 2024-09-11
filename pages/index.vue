@@ -1,19 +1,30 @@
 <template>
-  <div class="w-1/2">
+  <div class="w-full px-4">
     <UCard>
-      <div
-        class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700"
-      >
-        <UInput v-model="q" placeholder="Filter people..." />
+      <div class="flex items-center justify-between">
+        <div class="flex">
+          <UInput
+            v-model="inputText"
+            class="mr-1"
+            placeholder="Filter products..."
+          />
+          <UButton
+            icon="i-heroicons-magnifying-glass"
+            :disabled="isLoading"
+            @click="callGetProducts"
+          />
+        </div>
+        <strong>Total: {{ productsCount }}</strong>
       </div>
-      <UTable :rows="rows" />
+      <UTable :rows="productsData" :columns="columns" :loading="isLoading" />
       <div
         class="flex justify-center pt-4 border-t border-gray-200 dark:border-gray-700"
       >
         <UPagination
           v-model="page"
-          :page-count="pageCount"
-          :total="people.length"
+          :page-count="limit"
+          :total="productsCount"
+          :disabled="isLoading"
         />
       </div>
     </UCard>
@@ -21,104 +32,49 @@
 </template>
 
 <script setup lang="ts">
-const people = [
+import { getProducts } from "../services/api";
+const inputText = ref("");
+const page = ref(1);
+const limit = ref(5);
+const isLoading = ref(false);
+const productsData = ref([]);
+const productsCount = ref(0);
+
+const callGetProducts = async () => {
+  try {
+    isLoading.value = true;
+    const offset = page.value === 1 ? 0 : limit.value * page.value;
+    const { data, count } = await getProducts({
+      fts: inputText.value,
+      limit: limit.value,
+      offset,
+    });
+    productsData.value = data;
+    productsCount.value = count;
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+callGetProducts();
+watch([page, limit], () => callGetProducts());
+
+const columns = [
   {
-    id: 1,
-    name: "Lindsay Walton",
-    title: "Front-end Developer",
-    email: "lindsay.walton@example.com",
-    role: "Member",
+    key: "title",
+    label: "Title",
   },
   {
-    id: 2,
-    name: "Courtney Henry",
-    title: "Designer",
-    email: "courtney.henry@example.com",
-    role: "Admin",
+    key: "vendor",
+    label: "Vendor",
   },
   {
-    id: 3,
-    name: "Tom Cook",
-    title: "Director of Product",
-    email: "tom.cook@example.com",
-    role: "Member",
+    key: "publishedAt",
+    label: "Published At",
   },
   {
-    id: 4,
-    name: "Whitney Francis",
-    title: "Copywriter",
-    email: "whitney.francis@example.com",
-    role: "Admin",
-  },
-  {
-    id: 5,
-    name: "Leonard Krasner",
-    title: "Senior Designer",
-    email: "leonard.krasner@example.com",
-    role: "Owner",
-  },
-  {
-    id: 6,
-    name: "Floyd Miles",
-    title: "Principal Designer",
-    email: "floyd.miles@example.com",
-    role: "Member",
-  },
-  {
-    id: 7,
-    name: "Emily Selman",
-    title: "VP, User Experience",
-    email: "",
-    role: "Admin",
-  },
-  {
-    id: 8,
-    name: "Kristin Watson",
-    title: "VP, Human Resources",
-    email: "",
-    role: "Member",
-  },
-  {
-    id: 9,
-    name: "Emma Watson",
-    title: "Front-end Developer",
-    email: "",
-    role: "Member",
-  },
-  {
-    id: 10,
-    name: "John Doe",
-    title: "Designer",
-    email: "",
-    role: "Admin",
-  },
-  {
-    id: 11,
-    name: "Jane Doe",
-    title: "Director of Product",
-    email: "",
-    role: "Member",
-  },
-  {
-    id: 12,
-    name: "John Smith",
-    title: "Copywriter",
-    email: "",
-    role: "Admin",
-  },
-  {
-    id: 13,
-    name: "Jane Smith",
-    title: "Senior Designer",
-    email: "",
-    role: "Owner",
+    key: "updatedAt",
+    label: "Updated At",
   },
 ];
-
-const page = ref(1);
-const pageCount = 5;
-
-const rows = computed(() => {
-  return people.slice((page.value - 1) * pageCount, page.value * pageCount);
-});
 </script>

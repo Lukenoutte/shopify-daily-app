@@ -5,5 +5,10 @@ export default defineNuxtConfig({
   modules: ['@nuxt/ui', '@nuxtjs/tailwindcss', '@nuxt/eslint'],
   eslint: {
     checker: true
+  },
+  runtimeConfig: {
+    public: {
+      api: process.env.API_URL,
+    }
   }
 })
