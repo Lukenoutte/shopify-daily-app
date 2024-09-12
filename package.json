@@ -6,6 +6,7 @@
     "build": "nuxt build",
     "dev": "nuxt dev",
     "lint": "eslint .",
+    "start": "node .output/server/index.mjs",
     "format": "prettier --write \"{components,pages,plugins,middleware,layouts,composables,assets}/**/*.{js,jsx,ts,tsx,vue,html,css,scss,json,md}\"",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
