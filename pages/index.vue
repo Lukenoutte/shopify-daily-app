@@ -3,7 +3,10 @@
     <UCard color="gray">
       <div class="lg:flex items-center justify-between">
         <div class="lg:flex items-center">
-          <div class="w-full flex justify-center lg:mr-16">
+          <form
+            class="w-full flex justify-center lg:mr-16"
+            @submit.prevent="callGetProducts"
+          >
             <UInput
               v-model="inputText"
               class="mr-1"
@@ -12,16 +15,17 @@
             <UButton
               icon="i-heroicons-magnifying-glass"
               :disabled="isLoading"
-              @click="callGetProducts"
+              type="submit"
             />
-          </div>
+          </form>
           <div class="flex w-full justify-center mt-4 lg:mt-0">
             <USelect
               v-model="priceMin"
               placeholder="Price Min"
               class="mr-8 w-[130px]"
               :disabled="isLoading"
-              :options="[5, 10, 20, 40]"
+              :options="prices"
+              option-attribute="name"
             >
               <template #leading>
                 <UIcon name="i-heroicons-currency-dollar" class="w-5 h-5" />
@@ -32,7 +36,8 @@
               placeholder="Price Max"
               class="w-[140px]"
               :disabled="isLoading"
-              :options="[5, 10, 20, 40]"
+              :options="prices"
+              option-attribute="name"
             >
               <template #leading>
                 <UIcon
@@ -48,9 +53,8 @@
       </div>
       <UTable
         v-if="isLoading"
-        class="min-h-[300px]"
+        class="min-h-[300px] mt-4"
         :loading="isLoading"
-        :columns="columnProducts"
       />
       <UTable v-else :rows="productsData" :columns="columnProducts">
         <template #publishedAt-data="{ row }">
@@ -124,7 +128,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import moment from "moment";
 import { getProducts } from "../services/api";
 const inputText = ref("");
@@ -146,7 +150,7 @@ const formatCurrency = (value, currencyCode) => {
 const callGetProducts = async () => {
   try {
     isLoading.value = true;
-    const offset = page.value === 1 ? 0 : limit.value * page.value;
+    const offset = (page.value - 1) * limit.value;
     const { data, count } = await getProducts({
       fts: inputText.value,
       limit: limit.value,
@@ -207,6 +211,45 @@ const columnVariants = [
   {
     key: "requiresShipping",
     label: "Requires Shipping",
+  },
+];
+
+const prices = [
+  {
+    name: "",
+    value: undefined,
+  },
+  {
+    name: "$ 5",
+    value: 5,
+  },
+  {
+    name: "$ 10",
+    value: 10,
+  },
+  {
+    name: "$ 20",
+    value: 20,
+  },
+  {
+    name: "$ 100",
+    value: 100,
+  },
+  {
+    name: "$ 200",
+    value: 200,
+  },
+  {
+    name: "$ 500",
+    value: 500,
+  },
+  {
+    name: "$ 1.000",
+    value: 1000,
+  },
+  {
+    name: "$ 10.000",
+    value: 10000,
   },
 ];
 </script>
