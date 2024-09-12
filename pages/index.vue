@@ -63,7 +63,7 @@
         <template #updatedAt-data="{ row }">
           {{ moment(row.updatedAt).format("MM/DD/YYYY hh:mm") }}
         </template>
-        <template #expand="{ row }">
+        <template v-if="productsData.length" #expand="{ row }">
           <UCard class="p-4">
             <UCarousel
               v-slot="{ item }"
@@ -72,7 +72,11 @@
               indicators
               class="rounded-lg overflow-hidden h-[350px]"
             >
-              <img :src="item.src" class="w-full" draggable="false" />
+              <img
+                :src="item.src"
+                class="h-[300px] lg:h-auto lg:w-full"
+                draggable="false"
+              />
             </UCarousel>
             <UTable :rows="row.variants" :columns="columnVariants">
               <template #weight-data="{ row: rowVariants }">
@@ -114,7 +118,7 @@
         </template>
       </UTable>
       <div
-        class="flex justify-between pt-4 border-t border-gray-200 dark:border-gray-700"
+        class="flex flex-col lg:flex-row items-center lg:justify-between pt-4 border-t border-gray-200 dark:border-gray-700"
       >
         <div class="lg:w-[100px]" />
         <UPagination
@@ -125,6 +129,7 @@
         />
         <USelect
           v-model="limit"
+          class="mt-3 lg:mt-0"
           :disabled="isLoading"
           :options="[5, 10, 20, 40]"
         >
