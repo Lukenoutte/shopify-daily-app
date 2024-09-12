@@ -6,3 +6,7 @@
     </div>
   </div>
 </template>
+
+<script setup>
+useHead({ title: "Shopify Daily" });
+</script>
