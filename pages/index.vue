@@ -65,6 +65,15 @@
         </template>
         <template #expand="{ row }">
           <UCard class="p-4">
+            <UCarousel
+              v-slot="{ item }"
+              :items="row.images"
+              :ui="{ item: 'basis-full md:basis-1/2 lg:basis-1/3' }"
+              indicators
+              class="rounded-lg overflow-hidden h-[350px]"
+            >
+              <img :src="item.src" class="w-full" draggable="false" />
+            </UCarousel>
             <UTable :rows="row.variants" :columns="columnVariants">
               <template #weight-data="{ row: rowVariants }">
                 {{ `${rowVariants.weight} ${rowVariants.weightUnit}` }}
@@ -131,6 +140,7 @@
 <script setup>
 import moment from "moment";
 import { getProducts } from "../services/api";
+import { prices, columnVariants, columnProducts } from "~/utils";
 const inputText = ref("");
 const page = ref(1);
 const limit = ref(5);
@@ -167,89 +177,4 @@ const callGetProducts = async () => {
 
 callGetProducts();
 watch([page, limit, priceMin, priceMax], () => callGetProducts());
-
-const columnProducts = [
-  {
-    key: "title",
-    label: "Title",
-  },
-  {
-    key: "vendor",
-    label: "Vendor",
-  },
-  {
-    key: "publishedAt",
-    label: "Published At",
-  },
-  {
-    key: "updatedAt",
-    label: "Updated At",
-  },
-];
-
-const columnVariants = [
-  {
-    key: "title",
-    label: "Title",
-  },
-  {
-    key: "price",
-    label: "Price",
-  },
-  {
-    key: "priceCurrency",
-    label: "Currency",
-  },
-  {
-    key: "weight",
-    label: "Weight",
-  },
-  {
-    key: "taxable",
-    label: "Taxable",
-  },
-  {
-    key: "requiresShipping",
-    label: "Requires Shipping",
-  },
-];
-
-const prices = [
-  {
-    name: "",
-    value: undefined,
-  },
-  {
-    name: "$ 5",
-    value: 5,
-  },
-  {
-    name: "$ 10",
-    value: 10,
-  },
-  {
-    name: "$ 20",
-    value: 20,
-  },
-  {
-    name: "$ 100",
-    value: 100,
-  },
-  {
-    name: "$ 200",
-    value: 200,
-  },
-  {
-    name: "$ 500",
-    value: 500,
-  },
-  {
-    name: "$ 1.000",
-    value: 1000,
-  },
-  {
-    name: "$ 10.000",
-    value: 10000,
-  },
-];
 </script>
