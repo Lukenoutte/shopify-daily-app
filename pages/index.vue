@@ -21,130 +21,27 @@
           <div
             class="flex-col flex lg:flex-row w-full justify-center mt-4 lg:mt-0"
           >
-            <UButtonGroup
-              size="sm"
-              orientation="horizontal"
+            <SelectPrice
+              :is-loding="isLoading"
+              :current-price="priceMin"
               class="mr-8 w-full"
-            >
-              <USelect
-                v-model="priceMin"
-                placeholder="Price Min"
-                class="w-full lg:w-[130px]"
-                :disabled="isLoading"
-                :options="prices"
-                option-attribute="name"
-              >
-                <template #leading>
-                  <UIcon name="i-heroicons-currency-dollar" class="w-5 h-5" />
-                </template>
-              </USelect>
-              <UButton
-                v-if="priceMin"
-                title="Clear"
-                icon="i-heroicons-x-mark"
-                color="gray"
-                @click="priceMin = ''"
-              />
-            </UButtonGroup>
-            <UButtonGroup
-              size="sm"
-              orientation="horizontal"
+              placeholder="Price Min"
+              @on-change="(price) => (priceMin = price)"
+            />
+            <SelectPrice
+              :is-loding="isLoading"
+              :current-price="priceMax"
               class="mt-3 lg:mt-0"
-            >
-              <USelect
-                v-model="priceMax"
-                placeholder="Price Max"
-                class="w-full lg:w-[140px]"
-                :disabled="isLoading"
-                :options="prices"
-                option-attribute="name"
-              >
-                <template #leading>
-                  <UIcon
-                    name="i-heroicons-currency-dollar"
-                    class="w-5 h-5"
-                  /> </template
-              ></USelect>
-              <UButton
-                v-if="priceMax"
-                title="Clear"
-                icon="i-heroicons-x-mark"
-                color="gray"
-                @click="priceMax = ''"
-              />
-            </UButtonGroup>
+              placeholder="Price Max"
+              @on-change="(price) => (priceMax = price)"
+            />
           </div>
         </div>
         <div class="flex justify-center mt-4 lg:mt-0">
           <strong v-show="!isLoading">Total: {{ productsCount }}</strong>
         </div>
       </div>
-      <UTable
-        v-if="isLoading"
-        class="min-h-[300px] mt-4"
-        :loading="isLoading"
-      />
-      <UTable v-else :rows="productsData" :columns="columnProducts">
-        <template #publishedAt-data="{ row }">
-          {{ moment(row.publishedAt).format("MM/DD/YYYY hh:mm") }}
-        </template>
-        <template #updatedAt-data="{ row }">
-          {{ moment(row.updatedAt).format("MM/DD/YYYY hh:mm") }}
-        </template>
-        <template v-if="productsData.length" #expand="{ row }">
-          <UCard class="p-4">
-            <UCarousel
-              v-slot="{ item }"
-              :items="row.images"
-              :ui="{ item: 'basis-full md:basis-1/2 lg:basis-1/3' }"
-              indicators
-              class="rounded-lg overflow-hidden h-[350px] w-[300px] md:w-full"
-            >
-              <img
-                :src="item.src"
-                class="h-[300px] lg:h-auto lg:w-full"
-                draggable="false"
-              />
-            </UCarousel>
-            <UTable :rows="row.variants" :columns="columnVariants">
-              <template #weight-data="{ row: rowVariants }">
-                {{ `${rowVariants.weight} ${rowVariants.weightUnit}` }}
-              </template>
-              <template #price-data="{ row: rowVariants }">
-                {{
-                  `${formatCurrency(rowVariants.price, rowVariants.priceCurrency)}`
-                }}
-              </template>
-              <template #taxable-data="{ row: rowVariants }">
-                <UBadge
-                  :color="rowVariants.taxable ? 'primary' : 'gray'"
-                  variant="solid"
-                >
-                  <UIcon
-                    v-if="rowVariants.taxable"
-                    name="i-heroicons-check-circle"
-                    class="w-5 h-5"
-                  />
-                  <UIcon v-else name="i-heroicons-x-circle" class="w-5 h-5" />
-                </UBadge>
-              </template>
-              <template #requiresShipping-data="{ row: rowVariants }">
-                <UBadge
-                  :color="rowVariants.requiresShipping ? 'primary' : 'gray'"
-                  variant="solid"
-                >
-                  <UIcon
-                    v-if="rowVariants.requiresShipping"
-                    name="i-heroicons-check-circle"
-                    class="w-5 h-5"
-                  />
-                  <UIcon v-else name="i-heroicons-x-circle" class="w-5 h-5" />
-                </UBadge>
-              </template>
-            </UTable>
-          </UCard>
-        </template>
-      </UTable>
+      <MainTable :data="productsData" :is-loading="isLoading" />
       <div
         class="flex flex-col lg:flex-row items-center lg:justify-between pt-4 border-t border-gray-200 dark:border-gray-700"
       >
@@ -171,9 +68,7 @@
 </template>
 
 <script setup>
-import moment from "moment";
 import { getProducts } from "../services/api";
-import { prices, columnVariants, columnProducts } from "~/utils";
 const inputText = ref("");
 const page = ref(1);
 const limit = ref(5);
@@ -182,13 +77,6 @@ const productsData = ref([]);
 const productsCount = ref(0);
 const priceMin = ref("");
 const priceMax = ref("");
-
-const formatCurrency = (value, currencyCode) => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: currencyCode,
-  }).format(value);
-};
 
 const callGetProducts = async () => {
   try {
