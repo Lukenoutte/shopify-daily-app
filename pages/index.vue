@@ -19,32 +19,50 @@
             />
           </form>
           <div class="flex w-full justify-center mt-4 lg:mt-0">
-            <USelect
-              v-model="priceMin"
-              placeholder="Price Min"
-              class="mr-8 w-[130px]"
-              :disabled="isLoading"
-              :options="prices"
-              option-attribute="name"
-            >
-              <template #leading>
-                <UIcon name="i-heroicons-currency-dollar" class="w-5 h-5" />
-              </template>
-            </USelect>
-            <USelect
-              v-model="priceMax"
-              placeholder="Price Max"
-              class="w-[140px]"
-              :disabled="isLoading"
-              :options="prices"
-              option-attribute="name"
-            >
-              <template #leading>
-                <UIcon
-                  name="i-heroicons-currency-dollar"
-                  class="w-5 h-5"
-                /> </template
-            ></USelect>
+            <UButtonGroup size="sm" orientation="horizontal" class="mr-8">
+              <USelect
+                v-model="priceMin"
+                placeholder="Price Min"
+                class="w-[130px]"
+                :disabled="isLoading"
+                :options="prices"
+                option-attribute="name"
+              >
+                <template #leading>
+                  <UIcon name="i-heroicons-currency-dollar" class="w-5 h-5" />
+                </template>
+              </USelect>
+              <UButton
+                v-if="priceMin"
+                title="Clear"
+                icon="i-heroicons-x-mark"
+                color="gray"
+                @click="priceMin = ''"
+              />
+            </UButtonGroup>
+            <UButtonGroup size="sm" orientation="horizontal" class="mr-8">
+              <USelect
+                v-model="priceMax"
+                placeholder="Price Max"
+                class="w-[140px]"
+                :disabled="isLoading"
+                :options="prices"
+                option-attribute="name"
+              >
+                <template #leading>
+                  <UIcon
+                    name="i-heroicons-currency-dollar"
+                    class="w-5 h-5"
+                  /> </template
+              ></USelect>
+              <UButton
+                v-if="priceMax"
+                title="Clear"
+                icon="i-heroicons-x-mark"
+                color="gray"
+                @click="priceMax = ''"
+              />
+            </UButtonGroup>
           </div>
         </div>
         <div class="flex justify-center mt-4 lg:mt-0">
@@ -70,7 +88,7 @@
               :items="row.images"
               :ui="{ item: 'basis-full md:basis-1/2 lg:basis-1/3' }"
               indicators
-              class="rounded-lg overflow-hidden h-[350px]"
+              class="rounded-lg overflow-hidden h-[350px] w-[300px] md:w-full"
             >
               <img
                 :src="item.src"

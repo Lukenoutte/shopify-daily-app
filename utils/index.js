@@ -54,10 +54,6 @@ export const columnVariants = [
 
 export const prices = [
   {
-    name: "",
-    value: undefined,
-  },
-  {
     name: "$ 5",
     value: 5,
   },
