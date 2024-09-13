@@ -9,7 +9,7 @@
           >
             <UInput
               v-model="inputText"
-              class="mr-1"
+              class="mr-1 w-full"
               placeholder="Filter products..."
             />
             <UButton
@@ -18,12 +18,18 @@
               type="submit"
             />
           </form>
-          <div class="flex w-full justify-center mt-4 lg:mt-0">
-            <UButtonGroup size="sm" orientation="horizontal" class="mr-8">
+          <div
+            class="flex-col flex lg:flex-row w-full justify-center mt-4 lg:mt-0"
+          >
+            <UButtonGroup
+              size="sm"
+              orientation="horizontal"
+              class="mr-8 w-full"
+            >
               <USelect
                 v-model="priceMin"
                 placeholder="Price Min"
-                class="w-[130px]"
+                class="w-full lg:w-[130px]"
                 :disabled="isLoading"
                 :options="prices"
                 option-attribute="name"
@@ -40,11 +46,15 @@
                 @click="priceMin = ''"
               />
             </UButtonGroup>
-            <UButtonGroup size="sm" orientation="horizontal" class="mr-8">
+            <UButtonGroup
+              size="sm"
+              orientation="horizontal"
+              class="mt-3 lg:mt-0"
+            >
               <USelect
                 v-model="priceMax"
                 placeholder="Price Max"
-                class="w-[140px]"
+                class="w-full lg:w-[140px]"
                 :disabled="isLoading"
                 :options="prices"
                 option-attribute="name"
